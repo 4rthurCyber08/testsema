@@ -1,0 +1,56 @@
+---
+- name: Site-EDGE-2
+  hosts: site2
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Adding Banner
+	  ios_command: 
+	    commands: 
+		  - conf t
+		  - banner motd *
+		  - "## ANSIBLE WAS HERE ##"
+		  - *
+		  - end
+      tags:
+	    - banner
+	
+	- name: Assigning IP Addresses
+	  ios_command:
+	    commands:
+		  - conf t
+		  - int g3
+		  - ip add 20.20.20.2 255.255.255.0
+		  - no shut
+		  - end
+      tags:
+	    - ip
+    
+	- name: Configuring DHCP
+	  ios_command:
+	    commands:
+		  - conf t
+		  - ip dhcp excluded-address 20.20.20.1 20.20.20.201
+		  - ip dhcp pool autopool
+          - network 20.20.20.0 255.255.255.0
+          - default-router 20.20.20.2
+          - domain-name siteb.devs 
+          - dns-server 8.8.8.8
+		  - end
+      tags:
+	    - dhcp
+	
+	- name: Configuring BGP
+	  ios_command:
+	    commands:
+		  - conf t
+		  - no router bgp 200
+          - router bgp 200
+          - bgp log-neighbor-changes
+          - neighbor 192.168.102.100 remote-as 100
+          - address-family ipv4
+          - neighbor 192.168.102.100 activate
+          - network 192.168.102.0 mask 255.255.255.0
+          - end
+      tags:
+	    - bgp

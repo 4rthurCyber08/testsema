@@ -1,0 +1,17 @@
+[sitea]
+192.168.102.100
+
+[sitea:vars]
+ansible_user=admin
+ansible_password=pass
+ansible_connection=network_cli
+ansible_network_ios=ios
+
+[siteb]
+192.168.102.200
+
+[siteb:vars]
+ansible_user=admin
+ansible_password=pass
+ansible_connection=network_cli
+ansible_network_ios=ios
